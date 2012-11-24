@@ -1,0 +1,20 @@
+
+DEF carre (n)
+BEGIN
+REPEAT (4)
+  BEGIN
+  MOVE   (n)
+  ROTATE (90)
+  END
+END
+
+BEGIN
+JUMP   (100)
+ROTATE (90)
+JUMP   (100)
+ROTATE (-90)
+(* curseur en (100, 100) *)
+CALL carre (50)
+ROTATE (180)
+CALL carre (50)
+END

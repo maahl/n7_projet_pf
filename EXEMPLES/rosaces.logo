@@ -1,0 +1,30 @@
+DEF carre (n)
+BEGIN
+REPEAT (4)
+  BEGIN
+  MOVE   (n)
+  ROTATE (90)
+  END
+END
+
+DEF rosace (n)
+BEGIN
+REPEAT (n)
+  BEGIN
+  CALL carre  (50)
+  ROTATE      (360/n)
+  END
+END
+
+BEGIN
+JUMP   (100)
+ROTATE (90)
+JUMP   (100)
+ROTATE (-90)
+(* curseur en (100, 100) *)
+COLOR(0,255,255)
+CALL rosace (10)
+COLOR(255,0,255)
+JUMP   (200)
+CALL rosace (5)
+END

@@ -1,0 +1,60 @@
+DEF spiraleCarre (n)
+BEGIN
+IF (n <= 0)
+THEN
+  BEGIN
+  END
+ELSE
+  BEGIN
+  MOVE   (n)
+  ROTATE (90)
+  MOVE   (n-1)
+  ROTATE (90)
+  MOVE   (n-2)
+  ROTATE (90)
+  MOVE   (n-3)
+  ROTATE (90)
+  CALL spiraleCarre ((n-4))
+  END
+END
+
+DEF spiraleLineaire (r, k, p)
+BEGIN
+IF (p <= 0)
+THEN
+  BEGIN
+  END
+ELSE
+  BEGIN
+  MOVE   (r/57.3)
+  ROTATE (1)
+  CALL spiraleLineaire ((r+k), k, (p-1))
+  END
+END
+
+DEF spiraleEscargot (r, p)
+BEGIN
+IF (p <= 0)
+THEN
+  BEGIN
+  END
+ELSE
+  BEGIN
+  MOVE   (r)
+  ROTATE (360/p)
+  CALL spiraleEscargot (r, (p-1))
+  END
+END
+
+BEGIN
+JUMP   (100)
+ROTATE (90)
+JUMP   (300)
+ROTATE (-90)
+(* curseur en (100, 300) *)
+CALL spiraleCarre (50)
+JUMP (200)
+CALL spiraleEscargot (5, 100)
+JUMP (-200)
+CALL spiraleLineaire (10, 0.1, 1000)
+END

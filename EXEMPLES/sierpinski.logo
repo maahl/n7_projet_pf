@@ -1,0 +1,38 @@
+
+DEF sierpinski (n, p, s)
+BEGIN
+IF (p <= 0)
+THEN
+  BEGIN
+  IF (s = 1)
+  THEN
+  BEGIN
+  COLOR (250, 0, 0)
+  END
+  ELSE
+  BEGIN
+  COLOR (0, 0, 250)
+  END
+  MOVE   (n)
+  END
+ELSE
+  BEGIN
+  ROTATE (60*s)
+  CALL sierpinski ((n/2), (p-1), -s)
+  ROTATE (-60*s)
+  CALL sierpinski ((n/2), (p-1), s)
+  ROTATE (-60*s)
+  CALL sierpinski ((n/2), (p-1), -s)
+  ROTATE (60*s)
+  END
+END
+
+BEGIN
+JUMP   (1)
+ROTATE (90)
+JUMP   (1)
+ROTATE (-90)
+(* curseur en (1, 1) *)
+(* profondeur 10 *)
+CALL sierpinski (600, 10, 1)
+END
