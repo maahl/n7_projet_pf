@@ -1,2 +1,2 @@
 let analyseur_syntaxique lmot = 
-	failwith "A Faire";;
+	failwith "A Faire";; (* TODO *)

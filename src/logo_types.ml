@@ -40,16 +40,30 @@ type cmd =
         |Moveto of float*float
         |Jumpto of float*float
 ;;
-(* type des instructions : A DEFINIR *)
+(* type des instructions : TODO *)
 type instruction;;
-(* type des définitions de procedure : A DEFINIR *)
+(* type des définitions de procedure : TODO *)
 type definition;;
-(* type des programmes : A DEFINIR *)
-type programme;;
 
-(* type des environnements : A DEFINIR *)
+(* type paramètre *)
+type parametre;;
+(* type sous_programme : instruction elementaire sous forme d'arbre *)
+type sous_programme = 
+  | Move of (float*float)
+  | Jump of (float*float)
+  | Rotate of float
+  | Color of (int*int*int)
+  | If of (test * sous_programme list * sous_programme list)
+  | While of (test * sous_programme list);;
+(* type procedure : liste des params * liste des sous-programmes *)
+type procedure = parametre list * sous_programme list;;
+(* Type programme : liste des procédures * liste des instructions de premier
+ * niveau (d'indentation) *)
+type programme = procedure list * sous_programme list;;
+
+(* type des environnements : TODO *)
 type environnement;;
-(* type des états du système : A DEFINIR *)
+(* type des états du système : TODO *)
 type etat;;
 
 
