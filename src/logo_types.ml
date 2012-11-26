@@ -49,10 +49,10 @@ type definition;;
 type parametre;;
 (* type sous_programme : instruction elementaire sous forme d'arbre *)
 type sous_programme = 
-  | Move of (float*float)
-  | Jump of (float*float)
-  | Rotate of float
-  | Color of (int*int*int)
+  | Move of (expr*expr)
+  | Jump of (expr*expr)
+  | Rotate of expr
+  | Color of Graphics.color
   | If of (test * sous_programme list * sous_programme list)
   | While of (test * sous_programme list);;
 (* type procedure : liste des params * liste des sous-programmes *)
