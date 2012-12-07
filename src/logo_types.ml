@@ -1,4 +1,4 @@
-(* type des expressions arithmétiques *)
+(* type des expressions arithmetiques *)
 type expr =
   Plus of expr * expr
 | Moins of expr * expr
@@ -9,14 +9,14 @@ type expr =
 | Cosinus of expr
 | Sinus of expr
 | Tangente of expr;;
-(* type des expressions booléennes*)
+(* type des expressions booleennes*)
 type test =
   Equal of expr * expr
 | InfEq of expr * expr
 | And   of test * test
 | Or    of test * test
 | Not   of test;;
-(* type des mots clés du langage *)
+(* type des mots cles du langage *)
 type mot =
   IF
 | THEN
@@ -34,7 +34,7 @@ type mot =
 | EXPR of expr
 | TEST of test
 | IDENT of string;;
-(* type des commandes à générer pour afficher les figures *)
+(* type des commandes a generer pour afficher les figures *)
 type cmd =
         Change_color of Graphics.color        
         |Moveto of float*float
@@ -42,10 +42,10 @@ type cmd =
 ;;
 (* type des instructions : TODO *)
 type instruction;;
-(* type des définitions de procedure : TODO *)
+(* type des definitions de procedure : TODO *)
 type definition;;
 
-(* type paramètre *)
+(* type parametre *)
 type parametre;;
 (* type sous_programme : instruction elementaire sous forme d'arbre *)
 type sous_programme = 
@@ -57,13 +57,13 @@ type sous_programme =
   | Repeat of (expr * sous_programme list);;
 (* type procedure : liste des params * liste des sous-programmes *)
 type procedure = parametre list * sous_programme list;;
-(* Type programme : liste des procédures * liste des instructions de premier
+(* Type programme : liste des procedures * liste des instructions de premier
  * niveau (d'indentation) *)
 type programme = procedure list * sous_programme list;;
 
 (* type des environnements : TODO *)
 type environnement;;
-(* type des états du système : TODO *)
+(* type des etats du systeme : TODO *)
 type etat;;
 
 

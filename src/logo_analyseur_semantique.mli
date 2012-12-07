@@ -13,5 +13,4 @@ val execute_instruction : environnement -> instruction -> etat -> etat;;
 
 (* exécution de 'programme' à partir de l'état initial (0.0, 0.0, 0.0)	*)
 (* TODO 								*)
-val execute_programme : programme -> cmd list;;
-
+val execute_programme : programme -> cmd list
