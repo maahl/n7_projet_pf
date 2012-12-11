@@ -10,8 +10,13 @@ let evalue_expression env expr =
   | Tangente(t) -> tan (evalue_expression env t)
   | Var(v) -> failwith "TODO";;
 
-let evalue_condition environnement test = 
-	failwith "A Faire";;
+let evalue_condition env test = 
+  match test with
+  | Equal(a,b) -> ((evalue_expression env a) = (evalue_expression env b))
+  | InfEq(a,b) -> ((evalue_expression env a) <= (evalue_expression env b))
+  | And(a,b) -> ((evalue_expression env a) && (evalue_expression env b))
+  | Or(a,b) -> ((evalue_expression env a) || (evalue_expression env b))
+  | Not(a) -> not (evalue_expression env a);;
 
 let execute_instruction environnement instruction etat =
 	failwith "A Faire";;
