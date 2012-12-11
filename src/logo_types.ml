@@ -53,7 +53,9 @@ type instruction =
   | Rotate of expr
   | Color of Graphics.color
   | If of (test * instruction list * instruction list)
-  | Repeat of (expr * instruction list);;
+  | Repeat of (expr * instruction list)
+  | Call;; (* a completer : constructeur Call *)
+
 (* type procedure : liste des params * liste des sous-programmes *)
 type procedure = parametre list * instruction list;;
 (* Type programme : liste des procedures * liste des instructions de premier
