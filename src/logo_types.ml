@@ -40,26 +40,25 @@ type cmd =
         |Moveto of float*float
         |Jumpto of float*float
 ;;
-(* type des instructions : TODO *)
-type instruction;;
+
 (* type des definitions de procedure : TODO *)
 type definition;;
 
 (* type parametre *)
 type parametre;;
-(* type sous_programme : instruction elementaire sous forme d'arbre *)
-type sous_programme = 
+(* type instruction elementaire sous forme d'arbre *)
+type instruction = 
   | Move of expr
   | Jump of expr
   | Rotate of expr
   | Color of Graphics.color
-  | If of (test * sous_programme list * sous_programme list)
-  | Repeat of (expr * sous_programme list);;
+  | If of (test * instruction list * instruction list)
+  | Repeat of (expr * instruction list);;
 (* type procedure : liste des params * liste des sous-programmes *)
-type procedure = parametre list * sous_programme list;;
+type procedure = parametre list * instruction list;;
 (* Type programme : liste des procedures * liste des instructions de premier
  * niveau (d'indentation) *)
-type programme = procedure list * sous_programme list;;
+type programme = procedure list * instruction list;;
 
 (* type des environnements : TODO *)
 type environnement;;

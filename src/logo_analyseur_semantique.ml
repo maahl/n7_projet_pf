@@ -1,4 +1,6 @@
-let evalue_expression env expr =
+open Logo_types;;
+
+let rec evalue_expression env expr =
   match expr with
   | Const c -> c
   | Plus(a, b) -> (evalue_expression env a) +. (evalue_expression env b)
@@ -10,13 +12,13 @@ let evalue_expression env expr =
   | Tangente(t) -> tan (evalue_expression env t)
   | Var(v) -> failwith "TODO";;
 
-let evalue_condition env test = 
+let rec evalue_condition env test = 
   match test with
   | Equal(a,b) -> ((evalue_expression env a) = (evalue_expression env b))
   | InfEq(a,b) -> ((evalue_expression env a) <= (evalue_expression env b))
-  | And(a,b) -> ((evalue_expression env a) && (evalue_expression env b))
-  | Or(a,b) -> ((evalue_expression env a) || (evalue_expression env b))
-  | Not(a) -> not (evalue_expression env a);;
+  | And(a,b) -> ((evalue_condition env a) && (evalue_condition env b))
+  | Or(a,b) -> ((evalue_condition env a) || (evalue_condition env b))
+  | Not(a) -> not (evalue_condition env a);;
 
 let execute_instruction environnement instruction etat =
 	failwith "A Faire";;
