@@ -62,7 +62,5 @@ type programme = procedure list * instruction list;;
 
 (* type des environnements : TODO *)
 type environnement;;
-(* type des etats du systeme : TODO *)
-type etat;;
-
-
+(* type des etats du systeme : la position du curseur, son angle de visee et la couleur du trait *)
+type etat = (float*float) * float * Graphics.color;;
