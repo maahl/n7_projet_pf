@@ -1,10 +1,10 @@
 open Logo_types;;
 
-(* Interprétation d'une procédure : 
-  * retourne la procedure la nouvelle liste de mots 
+(* Interpretation d'une procedure : 
+  * retourne la nouvelle liste de mots 
   * TODO *)
 let interprete_procedure lmot = (lmot, ([],[]));;
-(* Interprétation d'une liste de sous_programmes :
+(* Interpretation d'une liste de sous_programmes :
   * retourne la liste de sous-programmes et la nouvelle liste de mots*)
 (*
  * fonction interprete_ss_prgms
@@ -27,7 +27,8 @@ let rec interprete_ss_prgms lmot =
                            in (new_lmot, Jump(e)::ss_prgms)
   | ROTATE::EXPR(e)::lmot' -> let (new_lmot, ss_prgms) = interprete_ss_prgms lmot'
                               in (new_lmot, Rotate(e)::ss_prgms)
-  | COLOR::EXPR(r)::EXPR(g)::EXPR(b)::lmot' -> failwith "TODO!"
+  | COLOR::EXPR(r)::EXPR(g)::EXPR(b)::lmot' -> let (new_lmot, ss_prgms) = interprete_ss_prgms lmot' in
+                                                 (new_lmot, Color(r, g, b)::ss_prgms)
   | IF::TEST(t)::THEN::BEGIN::lmot' -> let (new_lmot_if, ss_prgms_if) = interprete_ss_prgms lmot'
                                        in let (new_lmot_else, ss_prgms_else) = interprete_ss_prgms new_lmot_if
                                        in let (new_lmot, ss_prgms) = interprete_ss_prgms new_lmot_else

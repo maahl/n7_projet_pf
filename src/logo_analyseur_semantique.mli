@@ -1,10 +1,10 @@
 open Logo_types;;
 
 
-(* évaluation d'une expression 'expr' dans 'environnement' : TODO	*)
+(* évaluation d'une expression 'expr' dans 'environnement' *)
 val evalue_expression : environnement -> expr -> float;;
 
-(* évaluation d'une condition 'test' dans 'environnement' : TODO	*)
+(* évaluation d'une condition 'test' dans 'environnement' *)
 val evalue_condition : environnement -> test -> bool;;
 
 (* exécution de 'instruction' dans 'environnement' depuis la position	*)

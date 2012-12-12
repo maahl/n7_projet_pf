@@ -64,6 +64,5 @@ type programme = procedure list * instruction list;;
 
 (* type des environnements : TODO *)
 type environnement;;
-(* type des etats du systeme : la position du curseur et son angle de visee en
- * degres *)
+(* type des etats du systeme : la position du curseur et son angle de visee en degres *)
 type etat = (float*float) * float;;
