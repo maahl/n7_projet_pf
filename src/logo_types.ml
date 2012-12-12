@@ -47,11 +47,11 @@ type definition;;
 (* type parametre *)
 type parametre;;
 (* type instruction elementaire sous forme d'arbre *)
-type instruction = 
+type instruction =
   | Move of expr
   | Jump of expr
   | Rotate of expr
-  | Color of Graphics.color
+  | Color of expr * expr * expr
   | If of (test * instruction list * instruction list)
   | Repeat of (expr * instruction list)
   | Call;; (* a completer : constructeur Call *)
@@ -64,5 +64,6 @@ type programme = procedure list * instruction list;;
 
 (* type des environnements : TODO *)
 type environnement;;
-(* type des etats du systeme : la position du curseur, son angle de visee et la couleur du trait *)
-type etat = (float*float) * float * Graphics.color;;
+(* type des etats du systeme : la position du curseur et son angle de visee en
+ * degres *)
+type etat = (float*float) * float;;
