@@ -26,18 +26,18 @@ let rec interprete_ss_prgms lmot =
   (* JUMP: on ajoute l'instruction Jump et on interprete la suite *)
   | JUMP::EXPR(e)::lmot' -> let (new_lmot, ss_prgms) = interprete_ss_prgms lmot' 
                            in (new_lmot, Jump(e)::ss_prgms)
-  (* ROTATE: on modifie seulement l'etat et on interprete la suite *)
+  (* ROTATE: on ajoute l'instruction Rotate et on interprete la suite *)
   | ROTATE::EXPR(e)::lmot' -> let (new_lmot, ss_prgms) = interprete_ss_prgms lmot'
                               in (new_lmot, Rotate(e)::ss_prgms)
   (* COLOR: on ajoute l'instruction Color et on interprete la suite *)
   | COLOR::EXPR(r)::EXPR(g)::EXPR(b)::lmot' -> let (new_lmot, ss_prgms) = interprete_ss_prgms lmot' in
                                                  (new_lmot, Color(r, g, b)::ss_prgms)
-  (* IF: on evalue le test, s'il est vrai on interprete le premier sous-bloc d'instructions, sinon on evalue le second, puis on interprete la suite *)
+  (* IF: on ajoute l'instruction If constituee du test et des 2 sous-blocs d'instructions *)
   | IF::TEST(t)::THEN::BEGIN::lmot' -> let (new_lmot_if, ss_prgms_if) = interprete_ss_prgms lmot'
                                        in let (new_lmot_else, ss_prgms_else) = interprete_ss_prgms new_lmot_if
                                        in let (new_lmot, ss_prgms) = interprete_ss_prgms new_lmot_else
                                        in (new_lmot, If(t, ss_prgms_if, ss_prgms_else)::ss_prgms)
-  (* REPEAT: on evalue l'expression, si elle est > 0 on interprete le sous bloc d'instructions, puis on interprete la suite *)
+  (* REPEAT: on ajoute l'instruction Repeat constituee du nombre de repetitions et du sous bloc d'instructions *)
   | REPEAT::EXPR(e)::BEGIN::lmot' -> let (new_lmot_rpt, ss_prgms_rpt) = interprete_ss_prgms lmot'
                                      in let (new_lmot, ss_prgms) = interprete_ss_prgms new_lmot_rpt
                                      in (new_lmot, Repeat(e, ss_prgms_rpt)::ss_prgms)
@@ -57,7 +57,6 @@ let rec interprete_ss_prgms lmot =
    *)
 let rec analyseur_syntaxique lmot =
   match lmot with
-  | [] -> ([], [])
   (* definition du prog principal; constitue d'une liste de sous-programmes *)
   | BEGIN::lmot' -> let (_, ss_prgms) = interprete_ss_prgms lmot' 
                     in ([], ss_prgms)
