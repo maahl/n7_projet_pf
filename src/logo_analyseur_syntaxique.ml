@@ -4,38 +4,44 @@ open Logo_types;;
   * retourne la nouvelle liste de mots 
   * TODO *)
 let interprete_procedure lmot = (lmot, ([],[]));;
-(* Interpretation d'une liste de sous_programmes :
-  * retourne la liste de sous-programmes et la nouvelle liste de mots*)
 (*
  * fonction interprete_ss_prgms
- * But : interpréter une liste de mots jusqu'au END de même niveau que la
- * première instruction
+ * But : interpreter une liste de mots jusqu'au END de meme niveau que la
+ * premiere instruction
  * Entree : la liste de mots
  * Precondition : la liste contient au moins un END
- * Sortie : la liste de sous-programmes correspondant à la liste de mots jusqu'au END
- * Postcondition : tous les sous programmes jusqu'au END de meme niveau que la
- * premiere instruction sont renvoyes dans la liste
+ * Sortie : l'arbre d'instructions correspondant a la liste de mots jusqu'au END
+ * Postcondition : toutes les instructions jusqu'au END de meme niveau que la
+ * premiere instruction sont renvoyees dans la liste
  *)
 let rec interprete_ss_prgms lmot = 
   match lmot with
-  (* | [] -> [] *)
+  (* END: on remonte d'un niveau dans l'arbre *)
   | END::lmot' -> (lmot', []) 
+  (* BEGIN: on descend d'un niveau dans l'arbre *)
   | BEGIN::lmot' -> interprete_ss_prgms lmot'
+  (* MOVE: on ajoute l'instruction Move et on interprete la suite *)
   | MOVE::EXPR(e)::lmot' -> let (new_lmot, ss_prgms) = interprete_ss_prgms lmot' 
                             in (new_lmot, Move(e)::ss_prgms)
+  (* JUMP: on ajoute l'instruction Jump et on interprete la suite *)
   | JUMP::EXPR(e)::lmot' -> let (new_lmot, ss_prgms) = interprete_ss_prgms lmot' 
                            in (new_lmot, Jump(e)::ss_prgms)
+  (* ROTATE: on modifie seulement l'etat et on interprete la suite *)
   | ROTATE::EXPR(e)::lmot' -> let (new_lmot, ss_prgms) = interprete_ss_prgms lmot'
                               in (new_lmot, Rotate(e)::ss_prgms)
+  (* COLOR: on ajoute l'instruction Color et on interprete la suite *)
   | COLOR::EXPR(r)::EXPR(g)::EXPR(b)::lmot' -> let (new_lmot, ss_prgms) = interprete_ss_prgms lmot' in
                                                  (new_lmot, Color(r, g, b)::ss_prgms)
+  (* IF: on evalue le test, s'il est vrai on interprete le premier sous-bloc d'instructions, sinon on evalue le second, puis on interprete la suite *)
   | IF::TEST(t)::THEN::BEGIN::lmot' -> let (new_lmot_if, ss_prgms_if) = interprete_ss_prgms lmot'
                                        in let (new_lmot_else, ss_prgms_else) = interprete_ss_prgms new_lmot_if
                                        in let (new_lmot, ss_prgms) = interprete_ss_prgms new_lmot_else
                                        in (new_lmot, If(t, ss_prgms_if, ss_prgms_else)::ss_prgms)
+  (* REPEAT: on evalue l'expression, si elle est > 0 on interprete le sous bloc d'instructions, puis on interprete la suite *)
   | REPEAT::EXPR(e)::BEGIN::lmot' -> let (new_lmot_rpt, ss_prgms_rpt) = interprete_ss_prgms lmot'
                                      in let (new_lmot, ss_prgms) = interprete_ss_prgms new_lmot_rpt
                                      in (new_lmot, Repeat(e, ss_prgms_rpt)::ss_prgms)
+  (* CALL: TODO! *)
   | CALL::lmot' -> failwith "TODO!"
   | _ -> failwith "rtfm noob";;
 
@@ -45,19 +51,19 @@ let rec interprete_ss_prgms lmot =
    * interpretable par l'analyseur semantique
    * Entree : la liste des mots du prog LOGO
    * Precondition : Pas d'erreurs dans le programme LOGO (syntaxe, sens, etc)
-   * Sortie : liste des procédures et liste des sous-programmes du prog
+   * Sortie : liste des procedures et liste des sous-programmes du prog
    * principal, interpretable par l'analyseur semantique
    * Postcondition : le programme en sortie correspond au programme en entree
    *)
 let rec analyseur_syntaxique lmot =
   match lmot with
   | [] -> ([], [])
-  (* Définition d'une procédure : on récupère la procedure et la nouvelle liste
+  (* definition du prog principal; constitue d'une liste de sous-programmes *)
+  | BEGIN::lmot' -> let (_, ss_prgms) = interprete_ss_prgms lmot' 
+                    in ([], ss_prgms)
+  (* Definition d'une procedure : on recupere la procedure et la nouvelle liste
    * de mots *)
   | DEF::lmot' -> let (new_lmot, proc) = interprete_procedure lmot' 
                   in let (procs, ss_prgms) = analyseur_syntaxique new_lmot 
                   in (proc::procs, ss_prgms)
-  (* definition du prog principal; constitué d'une liste de sous-programmes *)
-  | BEGIN::lmot' -> let (_, ss_prgms) = interprete_ss_prgms lmot' 
-                    in ([], ss_prgms)
   | _ -> failwith "rtfm noob!";;
