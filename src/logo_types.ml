@@ -45,7 +45,7 @@ type cmd =
 type definition;;
 
 (* type parametre *)
-type parametre;;
+type parametre = string;;
 (* type instruction elementaire sous forme d'arbre *)
 type instruction =
   | Move of expr
@@ -56,8 +56,8 @@ type instruction =
   | Repeat of (expr * instruction list)
   | Call;; (* a completer : constructeur Call *)
 
-(* type procedure : liste des params * liste des sous-programmes *)
-type procedure = parametre list * instruction list;;
+(* type procedure : nom de la procedure * liste des params * liste des sous-programmes *)
+type procedure = string * parametre list * instruction list;;
 (* Type programme : liste des procedures * liste des instructions de premier
  * niveau (d'indentation) *)
 type programme = procedure list * instruction list;;
