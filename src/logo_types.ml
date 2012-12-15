@@ -41,9 +41,6 @@ type cmd =
         |Jumpto of float*float
 ;;
 
-(* type des definitions de procedure : TODO *)
-type definition;;
-
 (* type parametre *)
 type parametre = string;;
 (* type instruction elementaire sous forme d'arbre *)
@@ -54,13 +51,13 @@ type instruction =
   | Color of expr * expr * expr
   | If of (test * instruction list * instruction list)
   | Repeat of (expr * instruction list)
-  | Call;; (* a completer : constructeur Call *)
+  | Call of (string * expr list);;
 
 (* type procedure : nom de la procedure * liste des params * liste des sous-programmes *)
-type procedure = string * parametre list * instruction list;;
+type definition = string * parametre list * instruction list;;
 (* Type programme : liste des procedures * liste des instructions de premier
  * niveau (d'indentation) *)
-type programme = procedure list * instruction list;;
+type programme = definition list * instruction list;;
 
 (* type des environnements : TODO *)
 type environnement;;

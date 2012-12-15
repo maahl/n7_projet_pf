@@ -1,6 +1,20 @@
 open Logo_types;;
 
 (*
+ * fonction get_params
+ * But : recuperer les valeurs des parametres passes lors d'un call. Logiquement, devrait etre une fonction auxiliaire de interprete_instructions, mais je la mets la pour l'avoir une seule fois dans l'env
+ * Entree : la liste de mots
+ * Precondition : prog correct
+ * Sortie : la nouvelle liste de mots et la liste des params
+ * Postcondition : -
+ *)
+let rec get_params lmot =
+  match lmot with
+  | EXPR(valeur_param)::lmot' -> let (new_lmot, valeurs_params) = get_params lmot'
+                                  in (new_lmot, valeur_param::valeurs_params)
+  | _ -> (lmot, []);;
+
+(*
  * fonction interprete_instructions
  * But : interpreter une liste de mots jusqu'au END de meme niveau que la premiere instruction
  * Entree : la liste de mots
@@ -35,9 +49,11 @@ let rec interprete_instructions lmot =
   | REPEAT::EXPR(e)::BEGIN::lmot' -> let (new_lmot_rpt, instructions_rpt) = interprete_instructions lmot'
                                      in let (new_lmot, instructions) = interprete_instructions new_lmot_rpt
                                      in (new_lmot, Repeat(e, instructions_rpt)::instructions)
-  (* CALL: TODO! *)
-  | CALL::lmot' -> failwith "TODO!"
-  | _ -> failwith "rtfm noob";;
+  (* CALL: on recupere les valeurs des parametres passes a la fonction et on ajoute l'instruction correspondante *)
+  | CALL::IDENT(nom_proc)::lmot' -> let (new_lmot_def, valeurs_params) = get_params lmot'
+                                    in let (new_lmot, instructions) = interprete_instructions new_lmot_def
+                                    in (new_lmot, Call(nom_proc, valeurs_params)::instructions)
+  | _ -> failwith "rtfm noob (interprete_instructions)";;
 
 (*
  * fonction interprete_procedure
@@ -54,7 +70,7 @@ let rec interprete_procedure lmot =
                            in (new_lmot, param::params, instructions)
   | BEGIN::lmot' -> let (new_lmot, instructions) = interprete_instructions lmot'
                     in (new_lmot, [], instructions)
-  | _ -> failwith "rtfm noob";;
+  | _ -> failwith "rtfm noob (interprete_procedure)";;
 
   (*
    * fonction analyseur syntaxique
@@ -73,4 +89,4 @@ let rec analyseur_syntaxique lmot =
   | DEF::IDENT(nom_proc)::lmot' -> let (new_lmot, params, instructions) = interprete_procedure lmot' 
                   in let (procs, instructions) = analyseur_syntaxique new_lmot 
                   in ((nom_proc, params, instructions)::procs, instructions)
-  | _ -> failwith "rtfm noob!";;
+  | _ -> failwith "rtfm noob! (analyseur_syntaxique)";;

@@ -68,7 +68,7 @@ let execute_programme (defs, instructions) =
                                                          )::(instructions_rpt@instructions')) env etat
                                     else
                                       eval_instructions instructions' env etat
-    | Call::instructions' -> failwith "TODO: eval_instructions->Call"
+    | Call(proc, valeurs_params)::instructions' -> failwith "TODO: eval_instructions->Call"
 
   (* in let env = eval_defs defs env_initial *) 
   in eval_instructions instructions env_initial etat_initial;;
