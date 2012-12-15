@@ -10,8 +10,10 @@ open Logo_types;;
  *)
 let rec get_params lmot =
   match lmot with
+  (* tant qu'on trouve des parametres, on les recupere *)
   | EXPR(valeur_param)::lmot' -> let (new_lmot, valeurs_params) = get_params lmot'
                                   in (new_lmot, valeur_param::valeurs_params)
+  (* fin des parametres *)
   | _ -> (lmot, []);;
 
 (*
@@ -45,6 +47,8 @@ let rec interprete_instructions lmot =
                                        in let (new_lmot_else, instructions_else) = interprete_instructions new_lmot_if
                                        in let (new_lmot, instructions) = interprete_instructions new_lmot_else
                                        in (new_lmot, If(t, instructions_if, instructions_else)::instructions)
+  (* ELSE: on interprete simplement le bloc, il sera traite dans le cas if *)
+  | ELSE::BEGIN::lmot' -> interprete_instructions lmot'
   (* REPEAT: on ajoute l'instruction Repeat constituee du nombre de repetitions et du sous bloc d'instructions *)
   | REPEAT::EXPR(e)::BEGIN::lmot' -> let (new_lmot_rpt, instructions_rpt) = interprete_instructions lmot'
                                      in let (new_lmot, instructions) = interprete_instructions new_lmot_rpt
@@ -65,9 +69,12 @@ let rec interprete_instructions lmot =
  *)
 let rec interprete_procedure lmot = 
   match lmot with
+  (* on remonte d'un niveau dans l'arbre d'instructions *)
   | END::lmot' -> (lmot', [], [])
+  (* on recupere la liste des parametres *)
   | IDENT(param)::lmot' -> let (new_lmot, params, instructions) = interprete_procedure lmot'
                            in (new_lmot, param::params, instructions)
+  (* on recupere l'arbre d'instructions de la fonction *)
   | BEGIN::lmot' -> let (new_lmot, instructions) = interprete_instructions lmot'
                     in (new_lmot, [], instructions)
   | _ -> failwith "rtfm noob (interprete_procedure)";;
@@ -86,7 +93,7 @@ let rec analyseur_syntaxique lmot =
   | BEGIN::lmot' -> let (_, instructions) = interprete_instructions lmot' 
                     in ([], instructions)
   (* Definition d'une procedure : on recupere la procedure et la nouvelle liste de mots *)
-  | DEF::IDENT(nom_proc)::lmot' -> let (new_lmot, params, instructions) = interprete_procedure lmot' 
+  | DEF::IDENT(nom_proc)::lmot' -> let (new_lmot, params, instructions_proc) = interprete_procedure lmot' 
                   in let (procs, instructions) = analyseur_syntaxique new_lmot 
-                  in ((nom_proc, params, instructions)::procs, instructions)
+                  in ((nom_proc, params, instructions_proc)::procs, instructions)
   | _ -> failwith "rtfm noob! (analyseur_syntaxique)";;

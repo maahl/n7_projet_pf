@@ -55,11 +55,10 @@ type instruction =
 
 (* type procedure : nom de la procedure * liste des params * liste des sous-programmes *)
 type definition = string * parametre list * instruction list;;
-(* Type programme : liste des procedures * liste des instructions de premier
- * niveau (d'indentation) *)
+(* Type programme : liste des procedures * liste des instructions de premier niveau (d'indentation) *)
 type programme = definition list * instruction list;;
 
-(* type des environnements : TODO *)
-type environnement;;
+(* type des environnements : une liste de variables et une liste de procedures *)
+type environnement = (parametre * expr) list * definition list;;
 (* type des etats du systeme : la position du curseur et son angle de visee en degres *)
 type etat = (float*float) * float;;
