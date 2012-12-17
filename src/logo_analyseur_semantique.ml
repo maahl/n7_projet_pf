@@ -30,6 +30,14 @@ let rec get_valeur_param var params =
   | (param, valeur)::params' -> if var = param then valeur else get_valeur_param var params'
   | _ -> failwith "rtfm noob (get_valeur_param)";;
 
+(*
+ * fonction evalue_expression
+ * But : evaluer la valeur de l'expression passee en param
+ * Entree : l'expression a evaluer
+ * Precondition : -
+ * Sortie : la valeur flottante de l'expression
+ * Postcondition : -
+ *)
 let rec evalue_expression env expr =
   match expr with
   | Const c -> c
@@ -42,6 +50,14 @@ let rec evalue_expression env expr =
   | Tangente(t) -> tan (deg2rad(evalue_expression env t))
   | Var(v) -> let (params, _) = env in evalue_expression env (get_valeur_param v params);;
 
+(*
+ * fonction evalue_condition
+ * But : Evaluer la valeur booleenne d'une condition
+ * Entree : la condition
+ * Precondition : -
+ * Sortie : la valeur de la condition
+ * Postcondition : -
+ *)
 let rec evalue_condition env test = 
   match test with
   | Equal(a,b) -> ((evalue_expression env a) = (evalue_expression env b))
