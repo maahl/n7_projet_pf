@@ -1,0 +1,32 @@
+DEF vonkoch (l)
+BEGIN
+ IF (l>=1)
+ THEN
+   BEGIN
+   CALL vonkoch (l/3)
+   ROTATE (60)
+   CALL vonkoch (l/3)
+   ROTATE (-120)
+   CALL vonkoch (l/3)
+   ROTATE (60)
+   CALL vonkoch (l/3)
+   END
+ ELSE
+   BEGIN
+   MOVE (l)
+   END
+ END
+
+
+
+BEGIN
+JUMP (550)
+ROTATE (90)
+JUMP (150)
+ROTATE (90)
+CALL vonkoch (500)
+ROTATE (-120)
+CALL vonkoch (500)
+ROTATE (-120)
+CALL vonkoch (500)
+END

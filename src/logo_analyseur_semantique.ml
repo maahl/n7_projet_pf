@@ -89,43 +89,53 @@ let execute_instruction env instruction ((x,y), angle) =
 let rec enrichir_env params_env params_proc valeurs_params =
   (List.map2 (fun p v -> (p,v)) params_proc (List.map (fun x -> Const(evalue_expression (params_env, []) x)) valeurs_params))@params_env;;
 
-let rec calculer_etat cmd_list ((x, y), angle) =
-  match cmd_list with
-  | [] -> ((x, y), angle)
-  | Moveto(new_x, new_y)::cmd_list' -> calculer_etat cmd_list' ((new_x, new_y), angle)
-  | Jumpto(new_x, new_y)::cmd_list' -> calculer_etat cmd_list' ((new_x, new_y), angle)
-  | Change_color(c)::cmd_list' -> calculer_etat cmd_list' ((x, y), angle);;
+(*
+ * fonction etat_fin_bloc
+ * But : Faire remonter l'etat de fin d'un call pour reprendre l'exec depuis le bon endroit
+ * Entree : l'etat de fin du bloc et l'etat courant
+ * Precondition : -
+ * Sortie : l'etat approprie
+ * Postcondition : -
+ *)
+let etat_fin_bloc etat_courant etat_suivant =
+  match etat_suivant with
+  | None -> etat_courant
+  | Some(e) -> e;;
 
 (*
  * fonction execute_programme
  * But : transformer un arbre d'instructions en une liste de commandes interpretables par la fonction de dessin
  * Entree : l'arbre d'execution du programme
  * Precondition : -
- * Sortie : la liste de cmd correspondante
+ * Sortie : l'etat a la fin du bloc et la liste de cmd correspondant a l'arbre d'instructions
  * Postcondition : -
  *)
 let execute_programme (defs, instructions) =
   let rec eval_instructions instructions env etat =
     match instructions with
-    | [] -> []
+    | [] -> (etat, [])
     (* Move: on recupere le nouvel etat du curseur apres l'instruction Move, et on ajoute la cmd correspondante *)
-    | Move(e)::instructions' -> 
+    | Move(e)::instructions' ->
         let ((x, y), angle) = execute_instruction env (Move(e)) etat in
-        Moveto(x, y)::(eval_instructions instructions' env ((x, y), angle))
+        let (etat_suivant, cmd_list) = eval_instructions instructions' env ((x, y), angle) in
+        ( etat_suivant), Moveto(x, y)::cmd_list 
     (* Jump: idem *)
     | Jump(e)::instructions' -> 
         let ((x, y), angle) = execute_instruction env (Jump(e)) etat in
-        Jumpto(x, y)::(eval_instructions instructions' env ((x, y), angle))
+        let (etat_suivant, cmd_list) = eval_instructions instructions' env ((x, y), angle) in
+        ( etat_suivant), Jumpto(x, y)::cmd_list
     (* Rotate: idem *)
     | Rotate(t)::instructions' -> 
-        let nouvel_etat = (execute_instruction env (Rotate(t)) etat) in
-        eval_instructions instructions' env nouvel_etat
+        let etat_courant = (execute_instruction env (Rotate(t)) etat) in
+        let (etat_suivant, cmd_list) = eval_instructions instructions' env etat_courant in 
+        ( etat_suivant), cmd_list
     (* Color: on ajoute la cmd correspondante *)
     | Color(r, g, b)::instructions'  -> 
-        Change_color(Graphics.rgb (int_of_float (evalue_expression env r)) 
-                                  (int_of_float (evalue_expression env g)) 
-                                  (int_of_float (evalue_expression env b))
-                    )::(eval_instructions instructions' env etat)
+        let (etat_suivant, cmd_list) = eval_instructions instructions' env etat in
+        (etat_suivant), Change_color(Graphics.rgb (int_of_float (evalue_expression env r)) 
+                                                                          (int_of_float (evalue_expression env g)) 
+                                                                          (int_of_float (evalue_expression env b))
+                                                            )::cmd_list
     (* If: si la condition est vraie, on execute le premier bloc d'instructions, le deuxieme sinon *)
     | If(test, instructions_if, instructions_else)::instructions' -> 
         if evalue_condition env test then 
@@ -136,17 +146,17 @@ let execute_programme (defs, instructions) =
     | Repeat(expr, instructions_rpt)::instructions' -> 
         let x = evalue_expression env expr in 
         if x > 0. then
-          eval_instructions ((Repeat(Const(x-.1.), instructions_rpt))::(instructions_rpt@instructions')) env etat
+          eval_instructions ( (Repeat(Const(x-.1.), instructions_rpt))::(instructions_rpt@instructions') ) env etat
         else
           eval_instructions instructions' env etat
     (* Call: on enrichit l'environnement et on execute le bloc de la fonction *)
     | Call(nom_proc, valeurs_params)::instructions' -> 
-        let (params, defs) = env in 
-        let (_, params_proc, instructions_proc) = get_procedure nom_proc defs in 
+        let (params, defs) = env in
+        let (_, params_proc, instructions_proc) = get_procedure nom_proc defs in
         let new_env = (enrichir_env params params_proc valeurs_params, defs) in
-        let cmd_list_proc = eval_instructions instructions_proc new_env etat in
-        cmd_list_proc@(eval_instructions instructions' env (calculer_etat cmd_list_proc etat))
+        let (nouvel_etat_call, cmd_list_call) = (eval_instructions instructions_proc new_env etat) in
+        let (nouvel_etat, cmd_list) = (eval_instructions instructions' env (nouvel_etat_call)) in
+        (nouvel_etat, cmd_list_call@cmd_list)
 
   (* la liste de procedures joue le role d'env initial *)
-  in eval_instructions instructions ([], defs) etat_initial;;
-
+  in let (_, cmd_list) = eval_instructions instructions ([], defs) etat_initial in cmd_list;;
