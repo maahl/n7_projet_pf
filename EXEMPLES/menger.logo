@@ -2,37 +2,27 @@ DEF menger (n, l, h, angle)
 BEGIN
 	IF (n>0) THEN
 	BEGIN
-        	(* affichage du carre *)
-		REPEAT (2)
-		BEGIN
-			MOVE (l)
-			ROTATE (angle)
-			MOVE (h)
-			ROTATE (180-angle)
-		END
+	    (* affichage des 3 sous-carres du bas *)
+        REPEAT (3)
+	    BEGIN
+            CALL menger ((n-1), (l/3), (h/3), (angle))
+            	JUMP (l/3)
+        END
+        (* retour au point d'origine, pour ne pas perturber les appels precedents a la fonction *)
+	    ROTATE (180)
+        JUMP (l)
 
-	        (* affichage des 3 sous-carres du bas *)
-        	REPEAT (3)
-	        BEGIN
-        		CALL menger ((n-1), (l/3), (h/3), (angle))
-            		JUMP (l/3)
-        	END
-        	(* retour au point d'origine, pour ne pas perturber les appels precedents a la fonction *)
-	        ROTATE (180)
-        	MOVE (l)
-	        ROTATE (180)
+        (* on monte d'une ligne *)
+	    ROTATE (180+angle)
+        JUMP (h/3)
+	    ROTATE (-angle)
 
-        	(* on monte d'une ligne *)
-	        ROTATE (angle)
-        	MOVE (h/3)
-	        ROTATE (-angle)
-
-        	(* on affiche le carre milieu-gauche *)
-	        CALL menger ((n-1), (l/3), (h/3), angle)
-        	(* on se place au niveau du carre milieu droit *)
-	        JUMP ((2*l)/3)
-        	(* on affiche le carre milieu droit *)
-	        CALL menger ((n-1), (l/3), (h/3), angle)
+        (* on affiche le carre milieu-gauche *)
+	    CALL menger ((n-1), (l/3), (h/3), angle)
+        (* on se place au niveau du carre milieu droit *)
+	    JUMP ((2*l)/3)
+        (* on affiche le carre milieu droit *)
+	    CALL menger ((n-1), (l/3), (h/3), angle)
 
 		(* on retourne a l'origine *)
 		ROTATE (180)
@@ -50,27 +40,35 @@ BEGIN
 		(* Retour a l'origine *)
 		ROTATE (180)
 		JUMP (l)
-		ROTATE (180)
-		ROTATE (-180+angle)
+		ROTATE (angle)
 		JUMP ((2*h)/3)
 		ROTATE (180-angle)
 	END
 	ELSE
 	BEGIN
+        (* affichage du carre *)
+	    REPEAT (2)
+	    BEGIN
+		    MOVE (l)
+		    ROTATE (angle)
+		    MOVE (h)
+		    ROTATE (180-angle)
+	    END
 	END
 END
 BEGIN
 	ROTATE (90)
-	JUMP (110)
+	JUMP (150)
 	ROTATE (-90-20)
-	CALL menger ((4), (300), (300), (100))
-	JUMP (300)
-	ROTATE (30+20)
-	CALL menger ((4), (100), (300), (50))
-	ROTATE (180-30)
-	JUMP (230)
-	ROTATE (-90)
+    JUMP (10)
+	CALL menger ((4), (400), (400), (100))
 	JUMP (400)
+	ROTATE (30+20)
+	CALL menger ((4), (100), (400), (50))
+	ROTATE (180-30)
+	JUMP (308)
+	ROTATE (-90)
+	JUMP (530)
 	ROTATE (-90-20)
-	CALL menger ((4), (300), (100), (50))
+	CALL menger ((4), (400), (100), (50))
 END
