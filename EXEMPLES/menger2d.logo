@@ -1,0 +1,22 @@
+DEF menger (n, l)
+BEGIN
+	IF (n>0) THEN
+	BEGIN
+		REPEAT (4)
+		BEGIN
+			MOVE (l)
+			ROTATE (90)
+		END
+		REPEAT (3)
+		BEGIN
+			CALL menger ((n-1), (l/3))
+			MOVE (l/3)
+		END
+	END
+	ELSE
+	BEGIN
+	END
+END
+BEGIN
+	CALL menger ((4), (600))
+END

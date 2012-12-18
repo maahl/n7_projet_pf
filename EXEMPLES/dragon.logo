@@ -1,33 +1,37 @@
-DEF dragon_endroit (l1, n1)
+DEF dragonendroit (l, n)
 BEGIN
-	IF (n1 <= 0) THEN
+	IF (n <= 0) THEN
   	BEGIN
-  		MOVE (l1)
+  		MOVE (l)
 	END
 	ELSE
 	BEGIN
 		ROTATE (45)
-		CALL dragon_endroit ((l1*0.707), (n1-1))
+		CALL dragonendroit ((l*0.707), (n-1))
 		ROTATE (-90)
-		CALL dragon_envers ((l1*0.707), (n1-1))
+		CALL dragonenvers ((l*0.707), (n-1))
 		ROTATE (45)
 	END
 END
-DEF dragon_envers (l2, n2)
+DEF dragonenvers (l, n)
 BEGIN
-	IF (n2<=0) THEN
+	IF (n<=0) THEN
 	BEGIN
-		MOVE (l2)
+		MOVE (l)
 	END
 	ELSE
 	BEGIN
 		ROTATE (-45)
-		dragon_endroit ((l2*0.707), (n2-1))
+		CALL dragonendroit ((l*0.707), (n-1))
 		ROTATE (90)
-		dragon_envers (l2*0.707, n2-1)
+		CALL dragonenvers (l*0.707, n-1)
 		ROTATE (-45)
 	END
 END
 BEGIN
-	dragon_endroit (200, 15)
+	ROTATE (90)
+	JUMP (300)
+	ROTATE (-90)
+	JUMP (200)
+	CALL dragonendroit (300, 17)
 END
