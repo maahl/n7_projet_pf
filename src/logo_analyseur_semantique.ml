@@ -66,16 +66,27 @@ let rec evalue_condition env test =
   | Or(a,b) -> ((evalue_condition env a) || (evalue_condition env b))
   | Not(a) -> not (evalue_condition env a);;
 
+(*
+ * fonction execute_instruction
+ * But : calculer l'etat du curseur apres l'exec d'une instruction, a partir de l'etat courant
+ * Entree : l'environnement courant, l'instruction a executer et l'etat avant l'instruction
+ * Precondition : -
+ * Sortie : le nouvel etat
+ * Postcondition : -
+ *)
 let execute_instruction env instruction ((x,y), angle) =
   match instruction with
-  | Move(e) -> let distance = evalue_expression env e in
-               let (new_x, new_y) = ((cos (deg2rad angle))*.distance +. x, (sin (deg2rad angle))*.distance +. y) in 
-                 ((new_x, new_y), angle)
-  | Jump(e) -> let distance = evalue_expression env e in
-               let (new_x, new_y) = ((cos (deg2rad angle))*.distance +. x, (sin (deg2rad angle))*.distance +. y) in
-                 ((new_x, new_y), angle)
-  | Rotate(t) -> let rotation = evalue_expression env t in
-                   ((x, y), angle+.rotation)
+  | Move(e) -> 
+      let distance = evalue_expression env e in
+      let (new_x, new_y) = ((cos (deg2rad angle))*.distance +. x, (sin (deg2rad angle))*.distance +. y) in 
+      ((new_x, new_y), angle)
+  | Jump(e) -> 
+      let distance = evalue_expression env e in
+      let (new_x, new_y) = ((cos (deg2rad angle))*.distance +. x, (sin (deg2rad angle))*.distance +. y) in
+      ((new_x, new_y), angle)
+  | Rotate(t) -> 
+      let rotation = evalue_expression env t in
+      ((x, y), angle+.rotation)
   | _ -> failwith "rtfm noob (execute_instruction)";;
 
 (*
@@ -88,19 +99,6 @@ let execute_instruction env instruction ((x,y), angle) =
  *)
 let rec enrichir_env params_env params_proc valeurs_params =
   (List.map2 (fun p v -> (p,v)) params_proc (List.map (fun x -> Const(evalue_expression (params_env, []) x)) valeurs_params))@params_env;;
-
-(*
- * fonction etat_fin_bloc
- * But : Faire remonter l'etat de fin d'un call pour reprendre l'exec depuis le bon endroit
- * Entree : l'etat de fin du bloc et l'etat courant
- * Precondition : -
- * Sortie : l'etat approprie
- * Postcondition : -
- *)
-let etat_fin_bloc etat_courant etat_suivant =
-  match etat_suivant with
-  | None -> etat_courant
-  | Some(e) -> e;;
 
 (*
  * fonction execute_programme
@@ -118,24 +116,24 @@ let execute_programme (defs, instructions) =
     | Move(e)::instructions' ->
         let ((x, y), angle) = execute_instruction env (Move(e)) etat in
         let (etat_suivant, cmd_list) = eval_instructions instructions' env ((x, y), angle) in
-        ( etat_suivant), Moveto(x, y)::cmd_list 
+        etat_suivant, Moveto(x, y)::cmd_list 
     (* Jump: idem *)
     | Jump(e)::instructions' -> 
         let ((x, y), angle) = execute_instruction env (Jump(e)) etat in
         let (etat_suivant, cmd_list) = eval_instructions instructions' env ((x, y), angle) in
-        ( etat_suivant), Jumpto(x, y)::cmd_list
+        etat_suivant, Jumpto(x, y)::cmd_list
     (* Rotate: idem *)
     | Rotate(t)::instructions' -> 
         let etat_courant = (execute_instruction env (Rotate(t)) etat) in
         let (etat_suivant, cmd_list) = eval_instructions instructions' env etat_courant in 
-        ( etat_suivant), cmd_list
+        etat_suivant, cmd_list
     (* Color: on ajoute la cmd correspondante *)
     | Color(r, g, b)::instructions'  -> 
         let (etat_suivant, cmd_list) = eval_instructions instructions' env etat in
-        (etat_suivant), Change_color(Graphics.rgb (int_of_float (evalue_expression env r)) 
-                                                                          (int_of_float (evalue_expression env g)) 
-                                                                          (int_of_float (evalue_expression env b))
-                                                            )::cmd_list
+        etat_suivant, Change_color(Graphics.rgb (int_of_float (evalue_expression env r)) 
+                                                (int_of_float (evalue_expression env g)) 
+                                                (int_of_float (evalue_expression env b))
+                                  )::cmd_list
     (* If: si la condition est vraie, on execute le premier bloc d'instructions, le deuxieme sinon *)
     | If(test, instructions_if, instructions_else)::instructions' -> 
         if evalue_condition env test then 
@@ -156,7 +154,7 @@ let execute_programme (defs, instructions) =
         let new_env = (enrichir_env params params_proc valeurs_params, defs) in
         let (nouvel_etat_call, cmd_list_call) = (eval_instructions instructions_proc new_env etat) in
         let (nouvel_etat, cmd_list) = (eval_instructions instructions' env (nouvel_etat_call)) in
-        (nouvel_etat, cmd_list_call@cmd_list)
+        nouvel_etat, cmd_list_call@cmd_list
 
   (* la liste de procedures joue le role d'env initial *)
   in let (_, cmd_list) = eval_instructions instructions ([], defs) etat_initial in cmd_list;;

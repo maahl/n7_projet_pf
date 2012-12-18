@@ -1,0 +1,33 @@
+DEF dragon_endroit (l1, n1)
+BEGIN
+	IF (n1 <= 0) THEN
+  	BEGIN
+  		MOVE (l1)
+	END
+	ELSE
+	BEGIN
+		ROTATE (45)
+		CALL dragon_endroit ((l1*0.707), (n1-1))
+		ROTATE (-90)
+		CALL dragon_envers ((l1*0.707), (n1-1))
+		ROTATE (45)
+	END
+END
+DEF dragon_envers (l2, n2)
+BEGIN
+	IF (n2<=0) THEN
+	BEGIN
+		MOVE (l2)
+	END
+	ELSE
+	BEGIN
+		ROTATE (-45)
+		dragon_endroit ((l2*0.707), (n2-1))
+		ROTATE (90)
+		dragon_envers (l2*0.707, n2-1)
+		ROTATE (-45)
+	END
+END
+BEGIN
+	dragon_endroit (200, 15)
+END
