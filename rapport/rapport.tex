@@ -1,10 +1,9 @@
 \documentclass[a4paper]{article}
-
 % Options possibles : 10pt, 11pt, 12pt (taille de la fonte)
 %                     oneside, twoside (recto simple, recto-verso)
 %                     draft, final (stade de dÃ©veloppement)
 
-\usepackage[utf8]{inputenc}   % LaTeX, comprends les accents !
+\usepackage[latin1]{inputenc}   % LaTeX, comprends les accents !
 \usepackage[T1]{fontenc}      % Police contenant les caracteres français
 \usepackage[francais]{babel}  % Placez ici une liste de langues, la
                               % derniere etant la langue principale
@@ -33,14 +32,43 @@
 
 \section{Présentation du projet}
 
-Le but de ce projet était de programmer les analyseurs syntaxiques et
-sémantiques d'un interpréteur du langage LOGO, le reste des fonctions
-nécessaires étant fourni. Ce rapport présente la démarche de conception et de
-programmation qui a été suivie pour ce projet.
+Le but de ce projet était de programmer, en monôme, les analyseurs syntaxiques et sémantiques d'un interpréteur du langage LOGO, le reste des fonctions nécessaires étant fourni. Ce rapport présente la démarche de conception et de programmation qui a été suivie pour ce projet.
 
-\subsection{Chronologie}
-J'ai commencé par implémenter les instructions Logo MOVE, ROTATE et COLOR, afin
-d'obtenir un résultat visible dès que possible.
+Ce programme a été réalisé, pour les parties non fournies par les professeurs, en programmation purement fonctionnelle, à l'aide du langage OCaml. Il a pour objectif de simuler le comportement d'une tortue LOGO, qui servait à initier à la programmation de manière ludique.
+
+Le langage LOGO tel que nous l'avons étudié ne comporte que quatre instructions élémentaires : 
+\begin{itemize}
+	\item JUMP, qui permet de déplacer la tortue sans dessiner ;
+	\item MOVE, qui déplace la tortue tout en dessinant ;
+	\item ROTATE, qui permet de diriger la tortue ;
+	\item COLOR, qui change la couleur du crayon.
+\end{itemize}
+
+Il offre également plusieurs structures de contrôle :
+\begin{itemize}
+	\item IF (...) THEN (...) ELSE (...), qui permet d'exécuter certaines instructions seulement si une certaine condition est vérifiée ;
+	\item REPEAT (...), qui permet de répéter un bloc d'instructions autant de fois que souhaité ;
+	\item DEF (...), la définition de procédures, qui introduit notamment la possibilité de dessiner facilement des fractales.
+\end{itemize}
+
+
+\section{Le programme}
+Cette section couvre les différentes étapes de réalisation de ce projet, selon leur ordre chronologique.
+
+\subsection{Conception}
+%La première chose qu'il a été nécessaire de faire, afin de commencer l'interpréteur, est la définition du type programme, renvoyé par l'analyseur syntaxique et utilisé par l'analyseur sémantique. En effet, sans celui-ci, il n'est pas possible de travailler ni sur la première fonction, ni sur la deuxième.
+%J'ai commencé par implémenter les instructions Logo MOVE, ROTATE et COLOR, afin
+%d'obtenir un résultat visible dès que possible.
+
+\subsection{Développement}
+
+\subsubsection{L'analyseur syntaxique}
+
+\subsubsection{L'analyseur sémantique}
+
+\subsection{Tests}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %USELESS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
