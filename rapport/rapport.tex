@@ -51,14 +51,20 @@ Il offre également plusieurs structures de contrôle :
 	\item DEF (...), la définition de procédures, qui introduit notamment la possibilité de dessiner facilement des fractales.
 \end{itemize}
 
+Les fonctions développées dans le cadre du projet transforment la liste de mots du programme LOGO (déjà parsée) en une liste de commandes interprétables par la fonction d'affichage.
 
 \section{Le programme}
 Cette section couvre les différentes étapes de réalisation de ce projet, selon leur ordre chronologique.
 
 \subsection{Conception}
-%La première chose qu'il a été nécessaire de faire, afin de commencer l'interpréteur, est la définition du type programme, renvoyé par l'analyseur syntaxique et utilisé par l'analyseur sémantique. En effet, sans celui-ci, il n'est pas possible de travailler ni sur la première fonction, ni sur la deuxième.
-%J'ai commencé par implémenter les instructions Logo MOVE, ROTATE et COLOR, afin
-%d'obtenir un résultat visible dès que possible.
+L'étape de conception a été très courte, du fait que la structure du programme était donnée avec le sujet. Elle consistait principalement en la définition des types nécessaires au passage des informations entre les analyseurs syntaxique et sémantique.
+J'ai donc commencé par définir mon type \texttt{programme}, qui est composé d'une liste de \texttt{procedure} et d'un arbre d'\texttt{instruction}.
+Comme j'avais l'intention de produire un résultat, même basique, le plus tôt possible, je ne me suis pas occupé de définir le type \texttt{procedure}, et me suis contenté de le déclarer. 
+Une \texttt{instruction} peut être soit une instruction élémentaire (Move, Jump, Rotate ou Color), soit une structure de contrôle :
+\begin{itemize}
+	\item If : elle est alors composée d'une condition, d'un premier bloc d'\texttt{instruction} qui sera exécuté si la condition est vérifiée, et un second bloc d'\texttt{instruction} qui sera exécuté dans le cas contraire.
+	\item Repeat : celle-ci est formée d'une expression indiquant le nombre de fois que le bloc d'instructions devra être exécuté, et le bloc d'\texttt{instruction} en question.
+\end{itemize}
 
 \subsection{Développement}
 
@@ -68,33 +74,4 @@ Cette section couvre les différentes étapes de réalisation de ce projet, selon l
 
 \subsection{Tests}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%USELESS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%\subsection{Praesent}         % Section plus petite
-
-% \subsubsection{Titre}       % Encore plus petite
-
-%\subsection{Quisque}
-
-% \paragraph{Titre}           % Toutes petites sections (le nom \paragraph
-                              % n'est pas tres bien choisi)
-
-% \subparagraph{Titre}        % La derniere
-
-% \appendix                   % Commencons les annexes
-
-% \section{Titre}             % Annexe A
-
-% \section{Titre}             % Annexe B
-
-% \listoffigures              % Table des figures
-
-% \listoftables               % Liste des tableaux
-
 \end{document}
-
-

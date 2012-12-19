@@ -29,10 +29,10 @@ BEGIN
 	END
 END
 BEGIN
-	COLOR (255,100, 0)
+	COLOR (255,100, 0) (* fancy color *)
 	ROTATE (90)
-	JUMP (300)
+	JUMP (100)
 	ROTATE (-90)
-	JUMP (200)
+	JUMP (100)
 	CALL dragonendroit (300, 17)
 END
