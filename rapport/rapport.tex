@@ -58,12 +58,13 @@ Cette section couvre les différentes étapes de réalisation de ce projet, selon l
 
 \subsection{Conception}
 L'étape de conception a été très courte, du fait que la structure du programme était donnée avec le sujet. Elle consistait principalement en la définition des types nécessaires au passage des informations entre les analyseurs syntaxique et sémantique.
-J'ai donc commencé par définir mon type \texttt{programme}, qui est composé d'une liste de \texttt{procedure} et d'un arbre d'\texttt{instruction}.
+J'ai donc commencé par définir mon type \texttt{programme}, qui était composé d'une liste de \texttt{procedure} et d'un arbre de \texttt{sous\_programme}.
 Comme j'avais l'intention de produire un résultat, même basique, le plus tôt possible, je ne me suis pas occupé de définir le type \texttt{procedure}, et me suis contenté de le déclarer. 
-Une \texttt{instruction} peut être soit une instruction élémentaire (Move, Jump, Rotate ou Color), soit une structure de contrôle :
+Un \texttt{sous\_programme} peut être soit une instruction élémentaire (Move, Jump, Rotate ou Color), soit une structure de contrôle :
 \begin{itemize}
-	\item If : elle est alors composée d'une condition, d'un premier bloc d'\texttt{instruction} qui sera exécuté si la condition est vérifiée, et un second bloc d'\texttt{instruction} qui sera exécuté dans le cas contraire.
-	\item Repeat : celle-ci est formée d'une expression indiquant le nombre de fois que le bloc d'instructions devra être exécuté, et le bloc d'\texttt{instruction} en question.
+	\item If : il est alors composé d'une condition, d'un premier bloc d'\texttt{instruction} qui sera exécuté si la condition est vérifiée, et un second bloc d'\texttt{instruction} qui sera exécuté dans le cas contraire.
+	\item Repeat : celui-ci est formé d'une expression indiquant le nombre de fois que le bloc d'instructions devra être exécuté, et du bloc d'\texttt{instruction} en question.
+	\item Call : le nom de la fonction appelée et la liste des valeurs des paramètres passés à cette fonction forment ce \texttt{sous\_programme}.
 \end{itemize}
 
 \subsection{Développement}
