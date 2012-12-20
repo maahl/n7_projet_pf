@@ -31,32 +31,39 @@ let rec interprete_instructions lmot =
   (* BEGIN: on interprete la suite *)
   | BEGIN::lmot' -> interprete_instructions lmot'
   (* MOVE: on ajoute l'instruction Move et on interprete la suite *)
-  | MOVE::EXPR(e)::lmot' -> let (new_lmot, instructions) = interprete_instructions lmot' 
-                            in (new_lmot, Move(e)::instructions)
+  | MOVE::EXPR(e)::lmot' -> 
+      let (new_lmot, instructions) = interprete_instructions lmot' in
+      (new_lmot, Move(e)::instructions)
   (* JUMP: on ajoute l'instruction Jump et on interprete la suite *)
-  | JUMP::EXPR(e)::lmot' -> let (new_lmot, instructions) = interprete_instructions lmot' 
-                           in (new_lmot, Jump(e)::instructions)
+  | JUMP::EXPR(e)::lmot' -> 
+      let (new_lmot, instructions) = interprete_instructions lmot' in 
+      (new_lmot, Jump(e)::instructions)
   (* ROTATE: on ajoute l'instruction Rotate et on interprete la suite *)
-  | ROTATE::EXPR(e)::lmot' -> let (new_lmot, instructions) = interprete_instructions lmot'
-                              in (new_lmot, Rotate(e)::instructions)
+  | ROTATE::EXPR(e)::lmot' -> 
+      let (new_lmot, instructions) = interprete_instructions lmot' in 
+      (new_lmot, Rotate(e)::instructions)
   (* COLOR: on ajoute l'instruction Color et on interprete la suite *)
-  | COLOR::EXPR(r)::EXPR(g)::EXPR(b)::lmot' -> let (new_lmot, instructions) = interprete_instructions lmot' in
-                                                 (new_lmot, Color(r, g, b)::instructions)
+  | COLOR::EXPR(r)::EXPR(g)::EXPR(b)::lmot' -> 
+      let (new_lmot, instructions) = interprete_instructions lmot' in
+      (new_lmot, Color(r, g, b)::instructions)
   (* IF: on ajoute l'instruction If constituee du test et des 2 sous-blocs d'instructions *)
-  | IF::TEST(t)::THEN::BEGIN::lmot' -> let (new_lmot_if, instructions_if) = interprete_instructions lmot'
-                                       in let (new_lmot_else, instructions_else) = interprete_instructions new_lmot_if
-                                       in let (new_lmot, instructions) = interprete_instructions new_lmot_else
-                                       in (new_lmot, If(t, instructions_if, instructions_else)::instructions)
+  | IF::TEST(t)::THEN::BEGIN::lmot' -> 
+      let (new_lmot_if, instructions_if) = interprete_instructions lmot' in 
+      let (new_lmot_else, instructions_else) = interprete_instructions new_lmot_if in 
+      let (new_lmot, instructions) = interprete_instructions new_lmot_else in 
+      (new_lmot, If(t, instructions_if, instructions_else)::instructions)
   (* ELSE: on interprete simplement le bloc, il sera traite dans le cas if *)
   | ELSE::BEGIN::lmot' -> interprete_instructions lmot'
   (* REPEAT: on ajoute l'instruction Repeat constituee du nombre de repetitions et du sous bloc d'instructions *)
-  | REPEAT::EXPR(e)::BEGIN::lmot' -> let (new_lmot_rpt, instructions_rpt) = interprete_instructions lmot'
-                                     in let (new_lmot, instructions) = interprete_instructions new_lmot_rpt
-                                     in (new_lmot, Repeat(e, instructions_rpt)::instructions)
+  | REPEAT::EXPR(e)::BEGIN::lmot' -> 
+      let (new_lmot_rpt, instructions_rpt) = interprete_instructions lmot' in 
+      let (new_lmot, instructions) = interprete_instructions new_lmot_rpt in 
+      (new_lmot, Repeat(e, instructions_rpt)::instructions)
   (* CALL: on recupere les valeurs des parametres passes a la fonction et on ajoute l'instruction correspondante *)
-  | CALL::IDENT(nom_proc)::lmot' -> let (new_lmot_def, valeurs_params) = get_params lmot'
-                                    in let (new_lmot, instructions) = interprete_instructions new_lmot_def
-                                    in (new_lmot, Call(nom_proc, valeurs_params)::instructions)
+  | CALL::IDENT(nom_proc)::lmot' -> 
+      let (new_lmot_def, valeurs_params) = get_params lmot' in 
+      let (new_lmot, instructions) = interprete_instructions new_lmot_def in 
+      (new_lmot, Call(nom_proc, valeurs_params)::instructions)
   | _ -> failwith "rtfm noob (interprete_instructions)";;
 
 (*
@@ -72,11 +79,13 @@ let rec interprete_procedure lmot =
   (* on remonte d'un niveau dans l'arbre d'instructions *)
   | END::lmot' -> (lmot', [], [])
   (* on recupere la liste des parametres *)
-  | IDENT(param)::lmot' -> let (new_lmot, params, instructions) = interprete_procedure lmot'
-                           in (new_lmot, param::params, instructions)
+  | IDENT(param)::lmot' -> 
+      let (new_lmot, params, instructions) = interprete_procedure lmot' in 
+      (new_lmot, param::params, instructions)
   (* on recupere l'arbre d'instructions de la fonction *)
-  | BEGIN::lmot' -> let (new_lmot, instructions) = interprete_instructions lmot'
-                    in (new_lmot, [], instructions)
+  | BEGIN::lmot' -> 
+      let (new_lmot, instructions) = interprete_instructions lmot' in 
+      (new_lmot, [], instructions)
   | _ -> failwith "rtfm noob (interprete_procedure)";;
 
   (*
@@ -90,10 +99,12 @@ let rec interprete_procedure lmot =
 let rec analyseur_syntaxique lmot =
   match lmot with
   (* definition du prog principal; constitue d'une liste de sous-programmes *)
-  | BEGIN::lmot' -> let (_, instructions) = interprete_instructions lmot' 
-                    in ([], instructions)
+  | BEGIN::lmot' -> 
+      let (_, instructions) = interprete_instructions lmot' in 
+      ([], instructions)
   (* Definition d'une procedure : on recupere la procedure et la nouvelle liste de mots *)
-  | DEF::IDENT(nom_proc)::lmot' -> let (new_lmot, params, instructions_proc) = interprete_procedure lmot' 
-                  in let (procs, instructions) = analyseur_syntaxique new_lmot 
-                  in ((nom_proc, params, instructions_proc)::procs, instructions)
+  | DEF::IDENT(nom_proc)::lmot' -> 
+      let (new_lmot, params, instructions_proc) = interprete_procedure lmot' in 
+      let (procs, instructions) = analyseur_syntaxique new_lmot in 
+      ((nom_proc, params, instructions_proc)::procs, instructions)
   | _ -> failwith "rtfm noob! (analyseur_syntaxique)";;

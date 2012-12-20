@@ -7,6 +7,8 @@
 \usepackage[T1]{fontenc}      % Police contenant les caracteres français
 \usepackage[francais]{babel}  % Placez ici une liste de langues, la
                               % derniere etant la langue principale
+\usepackage{listings}
+\usepackage{graphicx}
 
 \usepackage[a4paper]{geometry}% Reduire les marges
 % \pagestyle{headings}        % Pour mettre des entetes avec les titres
@@ -19,6 +21,8 @@
 			      % absence)
 
 \sloppy                       % Ne pas faire deborder les lignes dans la marge
+
+\lstset{language=ADA, basicstyle=\small, frame=single, name=dragon.logo, numbers=left, breaklines=true}
 
 \begin{document}
 
@@ -36,19 +40,20 @@ Le but de ce projet était de programmer, en monôme, les analyseurs syntaxiques e
 
 Ce programme a été réalisé, pour les parties non fournies par les professeurs, en programmation purement fonctionnelle, à l'aide du langage OCaml. Il a pour objectif de simuler le comportement d'une tortue LOGO, qui servait à initier à la programmation de manière ludique.
 
-Le langage LOGO tel que nous l'avons étudié ne comporte que quatre instructions élémentaires : 
+Le langage LOGO tel que nous l'avons étudié ne comporte que cinq instructions élémentaires : 
 \begin{itemize}
-	\item JUMP, qui permet de déplacer la tortue sans dessiner ;
-	\item MOVE, qui déplace la tortue tout en dessinant ;
-	\item ROTATE, qui permet de diriger la tortue ;
-	\item COLOR, qui change la couleur du crayon.
+	\item \texttt{JUMP}, qui permet de déplacer la tortue sans dessiner ;
+	\item \texttt{MOVE}, qui déplace la tortue tout en dessinant ;
+	\item \texttt{ROTATE}, qui permet de diriger la tortue ;
+	\item \texttt{COLOR}, qui change la couleur du crayon ;
+	\item \texttt{CALL}, qui appelle une fonction définie auparavant.
 \end{itemize}
 
 Il offre également plusieurs structures de contrôle :
 \begin{itemize}
-	\item IF (...) THEN (...) ELSE (...), qui permet d'exécuter certaines instructions seulement si une certaine condition est vérifiée ;
-	\item REPEAT (...), qui permet de répéter un bloc d'instructions autant de fois que souhaité ;
-	\item DEF (...), la définition de procédures, qui introduit notamment la possibilité de dessiner facilement des fractales.
+	\item \texttt{IF (...) THEN (...) ELSE (...)}, qui permet d'exécuter certaines instructions seulement si une certaine condition est vérifiée ;
+	\item \texttt{REPEAT (...)}, qui permet de répéter un bloc d'instructions autant de fois que souhaité ;
+	\item \texttt{DEF (...)}, la définition de procédures, qui introduit notamment la possibilité de dessiner facilement des fractales.
 \end{itemize}
 
 Les fonctions développées dans le cadre du projet transforment la liste de mots du programme LOGO (déjà parsée) en une liste de commandes interprétables par la fonction d'affichage.
@@ -58,21 +63,69 @@ Cette section couvre les différentes étapes de réalisation de ce projet, selon l
 
 \subsection{Conception}
 L'étape de conception a été très courte, du fait que la structure du programme était donnée avec le sujet. Elle consistait principalement en la définition des types nécessaires au passage des informations entre les analyseurs syntaxique et sémantique.
-J'ai donc commencé par définir mon type \texttt{programme}, qui était composé d'une liste de \texttt{procedure} et d'un arbre de \texttt{sous\_programme}.
+J'ai donc commencé par définir mon type \texttt{programme}, qui était composé d'une liste de \texttt{procedure} et d'un arbre de \texttt{sous\_programme} correspondant au programme principal.
 Comme j'avais l'intention de produire un résultat, même basique, le plus tôt possible, je ne me suis pas occupé de définir le type \texttt{procedure}, et me suis contenté de le déclarer. 
 Un \texttt{sous\_programme} peut être soit une instruction élémentaire (Move, Jump, Rotate ou Color), soit une structure de contrôle :
 \begin{itemize}
-	\item If : il est alors composé d'une condition, d'un premier bloc d'\texttt{instruction} qui sera exécuté si la condition est vérifiée, et un second bloc d'\texttt{instruction} qui sera exécuté dans le cas contraire.
-	\item Repeat : celui-ci est formé d'une expression indiquant le nombre de fois que le bloc d'instructions devra être exécuté, et du bloc d'\texttt{instruction} en question.
-	\item Call : le nom de la fonction appelée et la liste des valeurs des paramètres passés à cette fonction forment ce \texttt{sous\_programme}.
+	\item \texttt{If} : il est alors composé d'une condition, d'un premier bloc d'\texttt{instruction} qui sera exécuté si la condition est vérifiée, et un second bloc d'\texttt{instruction} qui sera exécuté dans le cas contraire.
+	\item \texttt{Repeat} : celui-ci est formé d'une expression indiquant le nombre de fois que le bloc d'instructions devra être exécuté, et du bloc d'\texttt{instruction} en question.
+	\item \texttt{Call} : le nom de la fonction appelée et la liste des valeurs des paramètres passés à cette fonction forment ce \texttt{sous\_programme}.
+	
 \end{itemize}
+
+Plus tard, j'ai défini le type \texttt{procedure}, qui est composé du nom de la procédure, de sa liste de paramètres, et de l'arbre d'instructions qui lui correspond.
 
 \subsection{Développement}
 
 \subsubsection{L'analyseur syntaxique}
 
+Le rôle de l'analyseur syntaxique est de transformer la liste de mots générée par l'analyseur lexical en un programme interprétable par l'analyseur sémantique.
+
+L'analyseur syntaxique de mon programme, lorsqu'il rencontre le mot-clé \texttt{DEF}, interprète la procédure (fonction \texttt{interprete\_procedure}), et s'appelle récursivement avec la liste de mots privée de la définition de la procédure.
+Lorsqu'il rencontre le \texttt{BEGIN} du programme principal, il construit l'arbre de \texttt{sous\_programme} correspondant (fonction \texttt{interprete\_instructions}).
+
+La fonction \texttt{interprete\_procedure} s'appelle récursivement tant qu'elle trouve des paramètres, puis construit l'arbre de \texttt{sous\_programme} de la définition (fonction \texttt{interprete\_instructions}), et renvoie la procédure ainsi créée.
+
+La fonction \texttt{interprete\_instructions} interprète la liste de mots qu'on lui passe en paramètre, mais uniquement jusqu'au \texttt{END} de même niveau que la première instruction de la liste, c'est-à-dire le premier bloc d'instructions de la liste, y compris les sous-blocs.  Cette particularité permet de générer très facilement les \texttt{sous\_programme} \texttt{If}, \texttt{Repeat}, ainsi que les définitions de procédures.
+Cette fonction renvoie la liste des mots qui restent à interpréter, ainsi que l'arbre de \texttt{sous\_programme} déjà interprété.
+
 \subsubsection{L'analyseur sémantique}
+
+En commençant à travailler sur l'analyseur sémantique, je me suis rendu compte que mes types \texttt{procedure} et \texttt{sous\_programme} correspondaient très exactement aux types \texttt{definition} et \texttt{instruction} pré-déclarés. J'ai donc commencé par convertir les premiers en les seconds.
+
+Le rôle de l'analyseur sémantique est de générer une liste de commandes (\texttt{cmd}) interprétables par la fonction de dessin, à partir d'un \texttt{programme}.
+
+L'analyseur sémantique de mon programme fait appel à la fonction \texttt{eval\_instructions} avec les paramètres initiaux, c'est-à-dire un \texttt{environnement} (liste de \texttt{procedure} et liste d'associations \texttt{parametre}/valeur) ne contenant que les procédures, et l'\texttt{etat} (coordonnées et angle de visée) initial du curseur.
+
+La fonction \texttt{eval\_instructions} est chargée de générer la liste des \texttt{cmd}. Pour ce faire, elle parcourt l'arbre d'\texttt{instruction} du \texttt{programme}, et utilise la fonction \texttt{execute\_instruction}, qui calcule le nouvel état du curseur, à partir de son état courant et de l'\texttt{instruction} à exécuter. Elle se charge aussi de remplacer les \texttt{If}, \texttt{Repeat} et \texttt{Call} en le sous-arbre d'instructions approprié, et l'évalue également.
+Enfin, elle enrichit et dépile l'environnement au fur et à mesure qu'il est nécessaire de le faire.
 
 \subsection{Tests}
 
+\subsubsection{La courbe du dragon}
+
+\lstinputlisting{"../EXEMPLES/dragon.logo"}
+\begin{figure}[!h]
+\includegraphics[scale=1]{"img/dragon"}
+\caption{Le résultat donné par l'exécution de dragon.logo}
+\end{figure}
+
+\subsubsection{L'éponge de Menger}
+
+\lstinputlisting{"../EXEMPLES/menger.logo"}
+\begin{figure}[!h]
+\includegraphics[scale=1]{"img/menger"}
+\caption{Le résultat donné par l'exécution de menger.logo}
+\end{figure}
+
+\section{Le code source}
+\lstset{language=Caml}
+\subsection{logo\_types.ml}
+\lstinputlisting{"../src/logo_types.ml"}
+
+\subsection{logo\_analyseur\_syntaxique.ml}
+\lstinputlisting{"../src/logo_analyseur_syntaxique.ml"}
+
+\subsection{logo\_analyseur\_semantique.ml}
+\lstinputlisting{"../src/logo_analyseur_semantique.ml"}
 \end{document}
